@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creative Product Team</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">◣◢</span>
+      <div>
+        <h1>Creative Product Team</h1>
+        <p>Beställ ett AI-team och se det arbeta — från koncept till lansering.</p>
+      </div>
+    </div>
+    <ol class="stepper" id="stepper">
+      <li data-step="brief" class="active">1 · Brief</li>
+      <li data-step="team">2 · Team</li>
+      <li data-step="run">3 · Arbete</li>
+    </ol>
+  </header>
+
+  <main>
+    <!-- VY 1: BRIEF -->
+    <section id="view-brief" class="view active">
+      <div class="card intro">
+        <h2>Berätta om produkten</h2>
+        <p class="muted">Svaren styr vilket team som sätts ihop. Fyll i det du vet — du behöver inte ha alla svar.</p>
+      </div>
+      <form id="brief-form" class="card">
+        <label>Produkt
+          <textarea name="product" rows="2" placeholder="Vad är det för produkt/tjänst? Fysisk, digital, hybrid?" required></textarea>
+        </label>
+        <label>Målgrupp
+          <input name="audience" placeholder="Vem är den för? Geografi, demografi, beteende." />
+        </label>
+        <div class="row">
+          <label>Marknader
+            <input name="markets" placeholder="Vilka länder/regioner?" />
+          </label>
+          <label>Ambition
+            <input name="ambition" placeholder="MVP/test eller full lansering?" />
+          </label>
+        </div>
+        <div class="row">
+          <label>Budget
+            <input name="budget" placeholder="Indikativ nivå" />
+          </label>
+          <label>Tidplan
+            <input name="timeline" placeholder="När ska det vara klart?" />
+          </label>
+        </div>
+        <label>Befintligt material
+          <textarea name="existing" rows="2" placeholder="Finns redan research, design, copy eller kod?"></textarea>
+        </label>
+        <button type="submit" class="primary" id="brief-submit">Sätt ihop teamet →</button>
+      </form>
+    </section>
+
+    <!-- VY 2: TEAM -->
+    <section id="view-team" class="view">
+      <div class="card intro">
+        <h2>Föreslaget team</h2>
+        <p class="muted" id="team-rationale"></p>
+      </div>
+      <div id="phase-plan" class="phase-plan"></div>
+      <div id="team-grid" class="team-grid"></div>
+      <div class="card add-row">
+        <button type="button" id="add-agent" class="ghost">+ Lägg till agent</button>
+      </div>
+      <div class="card">
+        <label>Uppgift till teamet
+          <textarea id="task" rows="3" placeholder="Vad ska teamet göra? Lämna tomt för att köra hela processen koncept → lansering."></textarea>
+        </label>
+        <div class="actions">
+          <button type="button" class="ghost" id="back-to-brief">← Tillbaka</button>
+          <button type="button" class="primary" id="start-run">Starta teamet ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VY 3: ARBETE -->
+    <section id="view-run" class="view">
+      <div class="card intro run-head">
+        <div>
+          <h2>Teamet arbetar</h2>
+          <p class="muted" id="run-task"></p>
+        </div>
+        <span class="status-pill" id="run-status">Startar…</span>
+      </div>
+      <div id="run-phases"></div>
+      <div class="card actions" id="run-actions" hidden>
+        <button type="button" class="ghost" id="new-project">Nytt projekt</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Dokumentvisare -->
+  <div id="doc-modal" class="modal" hidden>
+    <div class="modal-box">
+      <div class="modal-head">
+        <strong id="doc-title"></strong>
+        <button type="button" id="doc-close" class="ghost">Stäng</button>
+      </div>
+      <pre id="doc-body"></pre>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

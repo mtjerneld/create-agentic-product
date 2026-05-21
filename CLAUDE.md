@@ -72,11 +72,27 @@ assets/
     reference/     <- Godkända referensbilder per produkt
   videos/          <- Genererade videor
   audio/           <- Musik, röster, dialoger
-web/               <- Frontend (om det behövs)
-server/            <- Backend (om det behövs)
-scripts/           <- Hjälpscript
+web/               <- Frontend för GUI-appen (HTML/CSS/JS)
+server/            <- Backend för GUI-appen (FastAPI)
+scripts/           <- Hjälpscript (start.sh startar appen)
 .env               <- API-nycklar (gitignored)
 ```
+
+## Appen (GUI)
+
+Projektet har ett webb-GUI där användaren kan beställa ett agent-team och se det
+arbeta i realtid.
+
+- **Backend**: FastAPI i `server/` — orkestrerar teamet via Claude API och
+  streamar agenternas arbete (NDJSON).
+- **Frontend**: vanilla HTML/CSS/JS i `web/` — tre steg: Brief → Team → Arbete.
+- **Starta**: `./scripts/start.sh` (skapar `.venv`, installerar beroenden, kör på
+  `http://localhost:8000`).
+- **Kräver**: `ANTHROPIC_API_KEY` i `.env` (se `.env.example`).
+
+Flödet i appen speglar arbetsflödet ovan: användaren fyller i en brief, ett team
+föreslås och kan justeras, och teamet kör sedan faserna mot en uppgift medan
+agenternas leveranser streamas live och sparas i `docs/`.
 
 ## Agenter
 
