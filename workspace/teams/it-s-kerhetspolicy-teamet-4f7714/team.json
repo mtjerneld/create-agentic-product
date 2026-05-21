@@ -1,0 +1,111 @@
+{
+  "id": "it-s-kerhetspolicy-teamet-4f7714",
+  "name": "IT-säkerhetspolicy-teamet",
+  "created": "2026-05-21T07:39:56+00:00",
+  "brief": {
+    "product": "Jävla team som är experter på att granska IT-säkerhetspolicys.",
+    "audience": "IT-chefer",
+    "markets": "Sverige",
+    "ambition": "Full lansering.",
+    "budget": "",
+    "timeline": "Nu.",
+    "existing": "Regulatoriska ramverken som påverkar företag i Sverige."
+  },
+  "rationale": "Teamet är byggt för att systematiskt och djupgående granska IT-säkerhetspolicys för svenska företag, med fokus på de regulatoriska ramverk som gäller på den svenska marknaden. Rollerna täcker hela kedjan från juridisk och regulatorisk analys till teknisk granskning och kommunikation mot IT-chefer. Varje agent är specialiserad för att säkerställa att granskningarna håller hög kvalitet, är åtgärdsorienterade och relevanta för målgruppen. Teamet är uppbyggt för att återanvändas löpande och hantera många olika typer av policys över tid.",
+  "phases": [
+    {
+      "number": 1,
+      "name": "Regulatorisk kartläggning & analys",
+      "goal": "Identifiera och tolka alla relevanta regulatoriska ramverk (t.ex. NIS2, GDPR, DORA, ISO 27001) som påverkar den aktuella organisationen och skapa en granskningsbaseline."
+    },
+    {
+      "number": 2,
+      "name": "Teknisk & strukturell policygranskning",
+      "goal": "Granska IT-säkerhetspolicyns tekniska innehåll, struktur och täckning mot identifierade krav och branschpraxis."
+    },
+    {
+      "number": 3,
+      "name": "Gap-analys & riskvärdering",
+      "goal": "Identifiera luckor, svagheter och risker i policyn samt prioritera åtgärder utifrån allvarlighetsgrad och regulatorisk exponering."
+    },
+    {
+      "number": 4,
+      "name": "Rapportering & rekommendationer",
+      "goal": "Leverera ett tydligt, handlingsorienterat granskningsresultat anpassat för IT-chefer med konkreta förbättringsåtgärder och prioriteringsordning."
+    }
+  ],
+  "agents": [
+    {
+      "name": "project-lead",
+      "title": "Projektledare & Granskningskoordinator",
+      "emoji": "🧭",
+      "role": "Koordinerar hela granskningsprocessen, fördelar arbete mellan agenter, säkerställer att tidsplan och kvalitetskrav hålls, samt fungerar som primär kontaktpunkt mot uppdragsgivaren.",
+      "phase": 0,
+      "why": "Varje granskning involverar flera specialister och regulatoriska dimensioner — en dedikerad koordinator säkerställer att inget faller mellan stolarna och att leveransen är sammanhållen."
+    },
+    {
+      "name": "regulatory-compliance-analyst",
+      "title": "Regulatorisk Complianceanalytiker",
+      "emoji": "⚖️",
+      "role": "Kartlägger och tolkar de regulatoriska ramverk som är tillämpliga för organisationen, inklusive NIS2, GDPR, DORA och MSB:s föreskrifter. Skapar en normativ granskningsbas att mäta policyn mot.",
+      "phase": 1,
+      "why": "Svenska företag påverkas av ett komplext lapptäcke av EU-direktiv och nationella föreskrifter — en dedikerad regulatorisk analytiker säkerställer att ingen relevant regel missas."
+    },
+    {
+      "name": "iso-standards-specialist",
+      "title": "Standardspecialist (ISO/IEC)",
+      "emoji": "📐",
+      "role": "Ansvarar för tolkning och tillämpning av relevanta ISO/IEC-standarder, primärt ISO 27001 och ISO 27002, och säkerställer att granskningen även täcker internationell best practice utöver lagkrav.",
+      "phase": 1,
+      "why": "Regulatorisk efterlevnad räcker inte alltid — ISO-standarderna utgör branschpraxis och används flitigt som referens av svenska IT-chefer vid upphandling och revision."
+    },
+    {
+      "name": "it-security-policy-reviewer",
+      "title": "IT-säkerhetspolicygranskar",
+      "emoji": "🔍",
+      "role": "Utför den tekniska och strukturella granskningen av policydokumentet: kontrollerar täckning, tydlighet, aktualitet, ansvarsfördelning och implementerbarhet utifrån etablerade ramverk.",
+      "phase": 2,
+      "why": "Kärnan i produkten — en agent med djup teknisk säkerhetsexpertis som vet exakt vad en robust IT-säkerhetspolicy ska innehålla och hur den ska vara utformad."
+    },
+    {
+      "name": "threat-intelligence-advisor",
+      "title": "Hotbildsrådgivare",
+      "emoji": "🕵️",
+      "role": "Bedömer om policyn adresserar aktuella och relevanta cyberhot mot svenska organisationer, med stöd av aktuell hotintelligens från t.ex. NCSC-SE och ENISA.",
+      "phase": 2,
+      "why": "En policy kan vara regulatoriskt korrekt men ändå blind mot de faktiska hoten — denna agent ser till att granskningen är förankrad i verkligheten och inte bara i regeltexter."
+    },
+    {
+      "name": "gap-and-risk-analyst",
+      "title": "Gap- och Riskanalytiker",
+      "emoji": "📊",
+      "role": "Sammanställer identifierade luckor och svagheter från fas 1–2, värderar dem utifrån sannolikhet och konsekvens, och producerar en prioriterad risklista med klassificering.",
+      "phase": 3,
+      "why": "IT-chefer behöver inte bara veta vad som är fel — de behöver veta vad som är viktigast att åtgärda först. Denna agent omvandlar fynd till ett actionabelt riskregister."
+    },
+    {
+      "name": "remediation-strategist",
+      "title": "Åtgärdsstrateg",
+      "emoji": "🛠️",
+      "role": "Formulerar konkreta, genomförbara förbättringsförslag för varje identifierad brist, med hänsyn till organisationens storlek, bransch och befintlig mognadsgrad.",
+      "phase": 3,
+      "why": "Att lista problem utan lösningar skapar frustration snarare än värde — åtgärdsstrategen säkerställer att varje fynd åtföljs av en realistisk handlingsplan."
+    },
+    {
+      "name": "ciso-communication-specialist",
+      "title": "CISO-kommunikatör",
+      "emoji": "📣",
+      "role": "Omvandlar tekniska granskningsresultat till tydliga, beslutsunderlagsanpassade rapporter och presentationer riktade till IT-chefer och CISO:er, med rätt ton, terminologi och prioriteringsfokus.",
+      "phase": 4,
+      "why": "Granskningsteknik är inte värdefull om den inte kommuniceras rätt — denna agent ser till att IT-chefer faktiskt förstår, prioriterar och agerar på resultaten."
+    },
+    {
+      "name": "quality-assurance-reviewer",
+      "title": "Kvalitetssäkrare",
+      "emoji": "✅",
+      "role": "Granskar det slutliga leveransunderlaget för konsistens, korrekthet och fullständighet innan det lämnas till uppdragsgivaren. Säkerställer att teamets samlade arbete håller hög och jämn kvalitet.",
+      "phase": 4,
+      "why": "Med flera specialistagenter som arbetar parallellt behövs ett sista filter som säkerställer att den slutliga rapporten är sammanhängande, felfri och professionell."
+    }
+  ]
+}

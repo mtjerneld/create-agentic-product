@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(& .\\\\.venv\\\\Scripts\\\\python.exe -c \"import sys; sys.path.insert\\(0,'server'\\); import orchestrator, app; print\\('OK'\\)\")",
+      "PowerShell(& .\\\\.venv\\\\Scripts\\\\python.exe -c \"import sys; sys.path.insert\\(0,'server'\\); import app; print\\('app OK'\\)\")"
+    ]
+  }
+}

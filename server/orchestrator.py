@@ -1,4 +1,9 @@
-"""Team-orkestrering: föreslå ett agent-team och kör det fas för fas mot Claude API."""
+"""Team-orkestrering: föreslå ett agent-team och kör beständiga team mot jobb.
+
+Ett team skapas en gång och sparas. Det kan sedan köra flera jobb över tid.
+Mellan jobb bär teamet med sig en levande kunskapsbas (knowledge.md) som
+project-lead uppdaterar efter varje jobb.
+"""
 
 import os
 import re
@@ -7,8 +12,9 @@ from pathlib import Path
 
 from anthropic import AsyncAnthropic
 
+import store
+
 ROOT = Path(__file__).resolve().parent.parent
-DOCS_DIR = ROOT / "docs"
 
 BRIEF_FIELDS = [
     ("product", "Produkt"),
@@ -70,6 +76,11 @@ TEAM_TOOL = {
     "input_schema": {
         "type": "object",
         "properties": {
+            "name": {
+                "type": "string",
+                "description": "Ett kort, beskrivande namn på teamet, t.ex. "
+                               "'LinkedIn-teamet' eller 'Lanseringsteam Norden'.",
+            },
             "rationale": {
                 "type": "string",
                 "description": "2-4 meningar på svenska om varför teamet ser ut som det gör.",
@@ -97,28 +108,32 @@ TEAM_TOOL = {
                         "title": {"type": "string", "description": "Läsbar titel på svenska."},
                         "emoji": {"type": "string", "description": "En passande emoji."},
                         "role": {"type": "string", "description": "1-3 meningar om agentens ansvar."},
+                        "tools": {"type": "string", "description": "Kort lista av verktyg/"
+                                  "kapaciteter agenten använder, t.ex. 'konkurrentanalys, webbsök'."},
                         "phase": {"type": "integer", "description": "Fasnummer. 0 = project-lead/koordinator."},
                         "why": {"type": "string", "description": "Varför just denna agent behövs här."},
                     },
-                    "required": ["name", "title", "emoji", "role", "phase", "why"],
+                    "required": ["name", "title", "emoji", "role", "tools", "phase", "why"],
                 },
             },
         },
-        "required": ["rationale", "phases", "agents"],
+        "required": ["name", "rationale", "phases", "agents"],
     },
 }
 
-PROPOSE_SYSTEM = """Du är project-lead för ett ramverk som snabbt sätter ihop ett \
-AI-drivet kreativt team. Teamet tar en produktidé från koncept till lansering.
+PROPOSE_SYSTEM = """Du är project-lead för ett ramverk som sätter ihop \
+AI-drivna kreativa team. Ett team skapas en gång och återanvänds sedan för \
+flera uppgifter över tid — det ska alltså vara ett bestående, kompetent team, \
+inte en engångsgrupp.
 
 Givet en projektbrief: sätt ihop det ideala teamet av specialiserade agenter.
 Var kreativ och tänk bortom standardrollerna — lägg till roller som just detta
 projekt kräver (t.ex. sustainability-advisor, pricing-strategist, packaging-designer).
 
 Regler:
+- Ge teamet ett kort, beskrivande namn.
 - Inkludera alltid en project-lead med phase 0 (koordinator).
-- Definiera 2-4 arbetsfaser (t.ex. research, koncept/design, byggande, lansering)
-  anpassade efter projektet.
+- Definiera 2-4 arbetsfaser anpassade efter projektet.
 - 1-3 agenter per fas, 5-9 agenter totalt.
 - Skriv allt på svenska.
 Använd verktyget submit_team för att lämna in resultatet."""
@@ -128,7 +143,7 @@ async def propose_team(brief: dict) -> dict:
     client = get_client()
     msg = await client.messages.create(
         model=MODEL,
-        max_tokens=2200,
+        max_tokens=2400,
         system=PROPOSE_SYSTEM,
         tools=[TEAM_TOOL],
         tool_choice={"type": "tool", "name": "submit_team"},
@@ -144,19 +159,21 @@ async def propose_team(brief: dict) -> dict:
 
     team.setdefault("agents", [])
     team.setdefault("phases", [])
+    team.setdefault("name", "Namnlöst team")
     if not any(a.get("phase") == 0 for a in team["agents"]):
         team["agents"].insert(0, {
             "name": "project-lead",
             "title": "Project Lead",
             "emoji": "🎯",
             "role": "Koordinerar teamet, driver arbetet framåt och kvalitetssäkrar leveranser.",
+            "tools": "koordinering, kvalitetssäkring",
             "phase": 0,
             "why": "Behövs alltid för att hålla ihop projektet.",
         })
     return team
 
 
-# --- Steg 2: kör teamet ---------------------------------------------------
+# --- Steg 2: kör ett jobb -------------------------------------------------
 
 def _digest(deliverables: list, cap: int = 2500) -> str:
     out = []
@@ -168,13 +185,15 @@ def _digest(deliverables: list, cap: int = 2500) -> str:
     return "\n\n".join(out)
 
 
-async def _stream_agent(client, agent_id, title, emoji, system, user, emit, save_as=None):
+async def _stream_agent(client, agent_id, title, emoji, system, user, emit, save=None,
+                        max_tokens=2800):
+    """Streamar en agents svar. `save` = (team_id, job_id, filename) eller None."""
     await emit({"type": "agent_started", "agent": agent_id, "title": title, "emoji": emoji})
     parts = []
     try:
         async with client.messages.stream(
             model=MODEL,
-            max_tokens=2800,
+            max_tokens=max_tokens,
             system=system,
             messages=[{"role": "user", "content": user}],
         ) as stream:
@@ -186,29 +205,88 @@ async def _stream_agent(client, agent_id, title, emoji, system, user, emit, save
         raise
     full = "".join(parts).strip()
     deliverable = None
-    if save_as:
-        DOCS_DIR.mkdir(exist_ok=True)
-        (DOCS_DIR / save_as).write_text(f"# {title}\n\n{full}\n", encoding="utf-8")
-        deliverable = save_as
-    await emit({"type": "agent_done", "agent": agent_id, "deliverable": deliverable, "chars": len(full)})
+    if save:
+        team_id, job_id, filename = save
+        store.save_deliverable(team_id, job_id, filename, f"# {title}\n\n{full}\n")
+        deliverable = filename
+    await emit({
+        "type": "agent_done", "agent": agent_id,
+        "deliverable": deliverable, "chars": len(full),
+    })
     return full
 
 
-def _agent_system(title, role, phase_name, phase_goal) -> str:
+def _agent_system(title, role, tools, phase_name, phase_goal) -> str:
+    tools_line = f"Verktyg/kapaciteter du förväntas använda: {tools}\n" if tools else ""
     return (
-        f"Du är {title}, en agent i ett AI-drivet kreativt produktteam.\n"
+        f"Du är {title}, en agent i ett bestående AI-drivet kreativt produktteam.\n"
         f"Roll: {role}\n"
+        f"{tools_line}"
         f"Fas: {phase_name} — {phase_goal}\n\n"
         "Producera en konkret, högkvalitativ leverans för din roll i denna fas. "
-        "Var specifik och handlingsbar — inga generiska floskler. Gör rimliga "
-        "antaganden där information saknas och var tydlig med dem. "
+        "Var specifik och handlingsbar — inga generiska floskler. Använd teamets "
+        "kunskapsbas där den är relevant så att arbetet bygger vidare på tidigare "
+        "jobb. Gör rimliga antaganden där information saknas och var tydlig med dem. "
         "Formatera som ett markdown-dokument med tydliga rubriker. Skriv på svenska."
     )
 
 
-async def run_team(team: dict, task: str, brief: dict, emit) -> None:
+DELIVERY_SYSTEM = """Du är {title}, project-lead för teamet. Hela teamet har \
+arbetat klart och du ska nu sätta ihop teamets SLUTLEVERANS.
+
+Slutleveransen är det konkreta, färdiga resultat som uppgiften bad om — i ett \
+skick som kan användas direkt. Det är inte en process-sammanfattning och inte en \
+beskrivning av vad teamet gjorde, utan själva produkten.
+
+Skriv ett välformaterat markdown-dokument:
+1. Börja med en kort orientering (1-2 meningar): vad detta är.
+2. Därefter SJÄLVA LEVERANSEN i fullständigt, färdigt skick — t.ex. de färdiga
+   texterna/inläggen/planen ordagrant, inte sammanfattat. Konsolidera och putsa
+   agenternas arbete till en sammanhållen helhet, ta bort dubbletter och
+   antagandeprat.
+3. Avsluta med en kort sektion '## Nästa steg & att bevaka' (några punkter).
+
+Skriv på svenska. Var konkret och utelämna inget av det faktiska innehållet."""
+
+
+KNOWLEDGE_SYSTEM = """Du är project-lead och underhåller teamets kunskapsbas — \
+ett bestående dokument som teamet bär med sig mellan jobb.
+
+Du får den nuvarande kunskapsbasen och leveranserna från ett just avslutat jobb.
+Skriv en UPPDATERAD kunskapsbas i markdown som:
+- Behåller och förfinar varaktig research och insikter (om produkt, målgrupp,
+  marknad, varumärke, ton, juridik) som är användbar för framtida jobb.
+- Lägger till nya bestående insikter från det här jobbet.
+- UTELÄMNAR det som var rent jobbspecifikt (själva leveranserna, engångstexter).
+- Hålls kompakt och välstrukturerat — det här är ett referensdokument, inte ett arkiv.
+
+Svara med enbart det färdiga markdown-dokumentet, börja med rubriken '# Kunskapsbas'."""
+
+
+async def _update_knowledge(client, team_id, team_name, current, deliverables, emit):
+    await emit({"type": "knowledge_updating"})
+    user = (
+        f"TEAM: {team_name}\n\n"
+        f"NUVARANDE KUNSKAPSBAS:\n{current}\n\n"
+        f"LEVERANSER FRÅN DET AVSLUTADE JOBBET:\n{_digest(deliverables)}"
+    )
+    msg = await client.messages.create(
+        model=MODEL, max_tokens=2600, system=KNOWLEDGE_SYSTEM,
+        messages=[{"role": "user", "content": user}],
+    )
+    text = "".join(b.text for b in msg.content if b.type == "text").strip()
+    if text:
+        store.set_knowledge(team_id, text)
+    await emit({"type": "knowledge_updated"})
+
+
+async def run_team(team_id: str, job_id: str, task: str, emit) -> None:
+    """Kör ett sparat team mot ett jobb. Streamar händelser via `emit`."""
     client = get_client()
-    brief_text = format_brief(brief)
+    team = store.get_team(team_id)
+    brief_text = format_brief(team.get("brief", {}))
+    knowledge = store.get_knowledge(team_id)
+    attachments = store.get_attachments_text(team_id, job_id)
     task = (task or "").strip() or "Ta produkten från koncept till lansering enligt faserna."
 
     agents = team.get("agents", [])
@@ -222,6 +300,24 @@ async def run_team(team: dict, task: str, brief: dict, emit) -> None:
 
     deliverables: list = []
 
+    def attachments_block(cap: int = 24000) -> str:
+        if not attachments:
+            return ""
+        parts = ["BIFOGADE DOKUMENT (underlag som hör till uppgiften):"]
+        for name, text in attachments.items():
+            t = text.strip()
+            if len(t) > cap:
+                t = t[:cap] + "\n…(förkortat)"
+            parts.append(f"--- {name} ---\n{t}")
+        return "\n\n".join(parts) + "\n"
+
+    def context_block():
+        block = f"PROJEKTBRIEF:\n{brief_text}\n\nTEAMETS KUNSKAPSBAS:\n{knowledge}\n"
+        att = attachments_block()
+        if att:
+            block += f"\n{att}"
+        return block
+
     # Kickoff från project-lead
     if lead:
         await emit({"type": "phase_started", "phase": 0, "name": "Kickoff", "goal": "Sätt riktningen"})
@@ -231,8 +327,8 @@ async def run_team(team: dict, task: str, brief: dict, emit) -> None:
             f"Du är {lead.get('title', 'Project Lead')}, project-lead för teamet.",
             "Skriv en kort kickoff-brief (max ~300 ord) på svenska i markdown: "
             "återge målet, de viktigaste prioriteringarna, och vad varje fas måste "
-            f"leverera.\n\nPROJEKTBRIEF:\n{brief_text}\n\nUPPGIFT TILL TEAMET:\n{task}",
-            emit, save_as="00-kickoff.md",
+            f"leverera.\n\n{context_block()}\nUPPGIFT TILL TEAMET:\n{task}",
+            emit, save=(team_id, job_id, "00-kickoff.md"),
         )
         deliverables.append(("Kickoff-brief", kickoff))
         await emit({"type": "phase_done", "phase": 0})
@@ -249,16 +345,15 @@ async def run_team(team: dict, task: str, brief: dict, emit) -> None:
 
         async def run_one(agent):
             title = agent.get("title") or agent.get("name", "Agent")
-            user = (
-                f"PROJEKTBRIEF:\n{brief_text}\n\nUPPGIFT TILL TEAMET:\n{task}\n"
-            )
+            user = f"{context_block()}\nUPPGIFT TILL TEAMET:\n{task}\n"
             if prior:
-                user += f"\nLEVERANSER FRÅN TIDIGARE FASER:\n{prior}\n"
+                user += f"\nLEVERANSER HITTILLS I DETTA JOBB:\n{prior}\n"
             user += "\nLevera ditt bidrag nu."
             return await _stream_agent(
                 client, agent.get("name", slugify(title)), title, agent.get("emoji", "🧩"),
-                _agent_system(title, agent.get("role", ""), phase.get("name", ""), phase.get("goal", "")),
-                user, emit, save_as=f"{slugify(title)}.md",
+                _agent_system(title, agent.get("role", ""), agent.get("tools", ""),
+                              phase.get("name", ""), phase.get("goal", "")),
+                user, emit, save=(team_id, job_id, f"{slugify(title)}.md"),
             )
 
         results = await asyncio.gather(*(run_one(a) for a in phase_agents), return_exceptions=True)
@@ -267,19 +362,25 @@ async def run_team(team: dict, task: str, brief: dict, emit) -> None:
                 deliverables.append((agent.get("title") or agent.get("name", "Agent"), res))
         await emit({"type": "phase_done", "phase": num})
 
-    # Avslutande sammanfattning från project-lead
+    # Slutleverans från project-lead
     if lead:
-        await emit({"type": "phase_started", "phase": 999, "name": "Sammanfattning", "goal": "Knyt ihop"})
-        await _stream_agent(
-            client, "lead-summary",
-            f"{lead.get('title', 'Project Lead')} · Sammanfattning", lead.get("emoji", "🎯"),
-            f"Du är {lead.get('title', 'Project Lead')}, project-lead för teamet.",
-            "Alla agenter har levererat. Skriv en avslutande sammanfattning på svenska "
-            "i markdown: vad teamet producerat, konkreta nästa steg, och risker att "
-            f"bevaka.\n\nPROJEKTBRIEF:\n{brief_text}\n\nUPPGIFT:\n{task}\n\n"
-            f"ALLA LEVERANSER:\n{_digest(deliverables)}",
-            emit, save_as="99-sammanfattning.md",
+        await emit({"type": "phase_started", "phase": 999, "name": "Slutleverans",
+                    "goal": "Sätt ihop teamets färdiga leverans"})
+        delivery = await _stream_agent(
+            client, "lead-delivery",
+            f"{lead.get('title', 'Project Lead')} · Slutleverans", lead.get("emoji", "🎯"),
+            DELIVERY_SYSTEM.format(title=lead.get("title", "Project Lead")),
+            f"{context_block()}\nUPPGIFT TILL TEAMET:\n{task}\n\n"
+            f"AGENTERNAS FULLSTÄNDIGA LEVERANSER:\n{_digest(deliverables, cap=9000)}",
+            emit, save=(team_id, job_id, "slutleverans.md"), max_tokens=4096,
         )
+        deliverables.append(("Slutleverans", delivery))
         await emit({"type": "phase_done", "phase": 999})
+
+    # Uppdatera teamets kunskapsbas
+    try:
+        await _update_knowledge(client, team_id, team.get("name", ""), knowledge, deliverables, emit)
+    except Exception as e:  # noqa: BLE001
+        await emit({"type": "knowledge_error", "message": str(e)})
 
     await emit({"type": "run_done"})

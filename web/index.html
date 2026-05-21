@@ -8,23 +8,38 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="brand">
+    <div class="brand" id="brand" role="button" tabindex="0" title="Till Mina team">
       <span class="logo">◣◢</span>
       <div>
         <h1>Creative Product Team</h1>
-        <p>Beställ ett AI-team och se det arbeta — från koncept till lansering.</p>
+        <p>Beständiga AI-team — beställ en gång, ge nya uppgifter över tid.</p>
       </div>
     </div>
-    <ol class="stepper" id="stepper">
+    <ol class="stepper" id="stepper" hidden>
       <li data-step="brief" class="active">1 · Brief</li>
       <li data-step="team">2 · Team</li>
-      <li data-step="run">3 · Arbete</li>
     </ol>
   </header>
 
   <main>
-    <!-- VY 1: BRIEF -->
-    <section id="view-brief" class="view active">
+    <!-- VY: DASHBOARD -->
+    <section id="view-teams" class="view active">
+      <div class="card intro view-head">
+        <div>
+          <h2>Mina team</h2>
+          <p class="muted">Varje team minns sin research mellan uppgifter. Skapa flera team för olika ändamål.</p>
+        </div>
+        <button type="button" class="primary" id="new-team-btn">+ Nytt team</button>
+      </div>
+      <div id="teams-grid" class="teams-grid"></div>
+      <div id="teams-empty" class="card empty" hidden>
+        <p>Inga team än. Skapa ditt första team för att komma igång.</p>
+        <button type="button" class="primary" id="new-team-empty">+ Skapa team</button>
+      </div>
+    </section>
+
+    <!-- VY: BRIEF -->
+    <section id="view-brief" class="view">
       <div class="card intro">
         <h2>Berätta om produkten</h2>
         <p class="muted">Svaren styr vilket team som sätts ihop. Fyll i det du vet — du behöver inte ha alla svar.</p>
@@ -55,33 +70,102 @@
         <label>Befintligt material
           <textarea name="existing" rows="2" placeholder="Finns redan research, design, copy eller kod?"></textarea>
         </label>
-        <button type="submit" class="primary" id="brief-submit">Sätt ihop teamet →</button>
+        <div class="actions">
+          <button type="button" class="ghost" id="brief-cancel">← Avbryt</button>
+          <button type="submit" class="primary" id="brief-submit">Sätt ihop teamet →</button>
+        </div>
       </form>
     </section>
 
-    <!-- VY 2: TEAM -->
+    <!-- VY: TEAM (förslag, redigera, spara) -->
     <section id="view-team" class="view">
       <div class="card intro">
         <h2>Föreslaget team</h2>
         <p class="muted" id="team-rationale"></p>
+        <label>Teamets namn
+          <input id="team-name" placeholder="t.ex. LinkedIn-teamet" />
+        </label>
       </div>
       <div id="phase-plan" class="phase-plan"></div>
       <div id="team-grid" class="team-grid"></div>
       <div class="card add-row">
         <button type="button" id="add-agent" class="ghost">+ Lägg till agent</button>
       </div>
-      <div class="card">
-        <label>Uppgift till teamet
-          <textarea id="task" rows="3" placeholder="Vad ska teamet göra? Lämna tomt för att köra hela processen koncept → lansering."></textarea>
-        </label>
-        <div class="actions">
-          <button type="button" class="ghost" id="back-to-brief">← Tillbaka</button>
-          <button type="button" class="primary" id="start-run">Starta teamet ▶</button>
-        </div>
+      <div class="card actions">
+        <button type="button" class="ghost" id="back-to-brief">← Tillbaka</button>
+        <button type="button" class="primary" id="save-team">Spara team ✓</button>
       </div>
     </section>
 
-    <!-- VY 3: ARBETE -->
+    <!-- VY: TEAM-ARBETSYTA -->
+    <section id="view-workspace" class="view">
+      <div class="card intro view-head">
+        <div>
+          <h2 id="ws-name"></h2>
+          <p class="muted" id="ws-rationale"></p>
+        </div>
+        <button type="button" class="danger btn-sm" id="ws-delete">Ta bort team</button>
+      </div>
+
+      <div class="card">
+        <div class="block-head">
+          <h3 class="block-title">Ny uppgift till teamet</h3>
+          <button type="button" class="primary" id="ws-start">Starta teamet ▶</button>
+        </div>
+        <label>Vad ska teamet göra?
+          <textarea id="ws-task" rows="3" placeholder="Beskriv uppgiften. Teamet använder sin kunskapsbas och kör faserna."></textarea>
+        </label>
+        <div class="file-field">
+          <label for="ws-files" class="file-btn">📎 Bifoga dokument</label>
+          <input type="file" id="ws-files" multiple accept=".pdf,.txt,.md" hidden />
+          <span class="muted file-hint">PDF, TXT eller MD — skickas med som kontext (text extraheras).</span>
+        </div>
+        <div id="ws-file-list" class="file-list"></div>
+      </div>
+
+      <div class="card">
+        <div class="block-head">
+          <h3 class="block-title">Kunskapsbas <span class="muted">— minns mellan jobb</span></h3>
+          <div class="block-actions">
+            <button type="button" class="dl-btn" id="ws-knowledge-edit">✏️ Redigera</button>
+            <a id="ws-knowledge-dl" class="dl-btn">⬇ Word</a>
+          </div>
+        </div>
+        <div id="ws-knowledge" class="doc-render"></div>
+        <div id="ws-knowledge-editor" hidden>
+          <textarea id="ws-knowledge-text" class="md-editor" rows="16"></textarea>
+          <div class="actions end">
+            <button type="button" class="ghost btn-sm" id="ws-knowledge-cancel">Avbryt</button>
+            <button type="button" class="primary btn-sm" id="ws-knowledge-save">Spara</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="block-head">
+          <h3 class="block-title">Teamet <span class="muted">— roller, instruktioner &amp; verktyg</span></h3>
+          <button type="button" class="dl-btn" id="ws-team-edit">✏️ Redigera</button>
+        </div>
+        <div id="ws-agents" class="ws-agents"></div>
+        <div id="ws-team-editor" hidden>
+          <div id="ws-team-grid" class="team-grid"></div>
+          <div class="add-row">
+            <button type="button" class="ghost btn-sm" id="ws-add-agent">+ Lägg till agent</button>
+          </div>
+          <div class="actions end">
+            <button type="button" class="ghost btn-sm" id="ws-team-cancel">Avbryt</button>
+            <button type="button" class="primary btn-sm" id="ws-team-save">Spara team</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="block-title">Jobbhistorik</h3>
+        <div id="ws-jobs" class="ws-jobs"></div>
+      </div>
+    </section>
+
+    <!-- VY: ARBETE -->
     <section id="view-run" class="view">
       <div class="card intro run-head">
         <div>
@@ -91,22 +175,23 @@
         <span class="status-pill" id="run-status">Startar…</span>
       </div>
       <div id="run-phases"></div>
-      <div class="card actions" id="run-actions" hidden>
-        <button type="button" class="ghost" id="new-project">Nytt projekt</button>
+      <div class="card actions end" id="run-actions" hidden>
+        <button type="button" class="primary" id="back-to-workspace">← Till teamet</button>
       </div>
     </section>
   </main>
 
-  <!-- Dokumentvisare -->
-  <div id="doc-modal" class="modal" hidden>
-    <div class="modal-box">
-      <div class="modal-head">
-        <strong id="doc-title"></strong>
-        <button type="button" id="doc-close" class="ghost">Stäng</button>
+  <!-- Resultatpanel (sidopanel till höger) -->
+  <aside id="panel" class="side-panel" hidden>
+    <div class="panel-head">
+      <strong id="panel-title"></strong>
+      <div class="panel-actions">
+        <a id="panel-download" class="dl-btn" hidden>⬇ Word</a>
+        <button type="button" id="panel-close" class="ghost">Stäng ✕</button>
       </div>
-      <pre id="doc-body"></pre>
     </div>
-  </div>
+    <div id="panel-body" class="doc-render"></div>
+  </aside>
 
   <div id="toast" class="toast" hidden></div>
 
