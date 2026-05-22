@@ -1,0 +1,70 @@
+{
+  "id": "artikelredaktionen-c7024a",
+  "name": "Artikelredaktionen",
+  "created": "2026-05-21T12:19:09+00:00",
+  "brief": {
+    "product": "Jag vill ha en liten artikelredaktion; med en redaktör, en researcher och en skribent som tillsammans arbetar fram en artikel om ca 1 A4 på det tema jag väljer",
+    "audience": "",
+    "markets": "",
+    "ambition": "",
+    "budget": "",
+    "timeline": "",
+    "existing": ""
+  },
+  "rationale": "Briefen beskriver en liten, fokuserad redaktion med tre tydliga kärnroller: redaktör, researcher och skribent. Teamet är byggt för att återanvändas för valfritt tema gång på gång, och faserna speglar ett klassiskt redaktionellt arbetsflöde – från research till färdig artikel. Project-leaden säkerställer att temat tolkas rätt och att arbetet flödar smidigt mellan de tre specialisterna.",
+  "phases": [
+    {
+      "number": 1,
+      "name": "Temaanalys & research",
+      "goal": "Förstå det valda temat på djupet, identifiera relevanta fakta, källor och vinklar som artikeln kan bygga på."
+    },
+    {
+      "number": 2,
+      "name": "Disposition & redigering",
+      "goal": "Ta fram en tydlig artikeldisposition, bestäm vinkel och ton, och säkerställ att innehållet håller redaktionell kvalitet innan skrivandet börjar."
+    },
+    {
+      "number": 3,
+      "name": "Skrivning & slutleverans",
+      "goal": "Producera en välskriven, sammanhängande artikel på ca 1 A4 klar för publicering eller vidare användning."
+    }
+  ],
+  "agents": [
+    {
+      "name": "project-lead",
+      "title": "Redaktionschef",
+      "emoji": "🗂️",
+      "role": "Koordinerar teamet, tolkar användarens temainstruktion och fördelar arbetet mellan researcher, redaktör och skribent. Säkerställer att slutprodukten lever upp till uppdraget och håller ihop hela processen från brief till leverans.",
+      "tools": "uppgiftsfördelning, kvalitetskontroll, kommunikation med användaren",
+      "phase": 0,
+      "why": "Varje redaktion behöver en ansvarig som håller ihop arbetsflödet och ser till att temat tolkas korrekt redan från start."
+    },
+    {
+      "name": "researcher",
+      "title": "Researcher",
+      "emoji": "🔍",
+      "role": "Söker upp och sammanställer fakta, bakgrund, statistik och relevanta källor kring det valda temat. Levererar ett strukturerat researchu­nderlag som redaktören och skribenten kan arbeta vidare med.",
+      "tools": "webbsök, källkritik, faktasammanställning, databasåtkomst",
+      "phase": 1,
+      "why": "Artikeln behöver vila på korrekt och relevant information – en dedikerad researcher garanterar att underlaget håller hög kvalitet."
+    },
+    {
+      "name": "redaktor",
+      "title": "Redaktör",
+      "emoji": "✏️",
+      "role": "Tar emot researchunderlaget och formulerar en artikeldisposition med tydlig vinkel, ingress och dramaturgi. Ger skribenten en konkret skrivplan och granskar sedan det färdiga textförslaget med fokus på struktur, ton och begriplighet.",
+      "tools": "dispositionsverktyg, stilanalys, redigering, tonkalibrering",
+      "phase": 2,
+      "why": "En redaktör som bryggar research och skrivande säkerställer att artikeln får rätt form och tydlig röd tråd innan pennan sätts till papperet."
+    },
+    {
+      "name": "skribent",
+      "title": "Skribent",
+      "emoji": "📝",
+      "role": "Skriver artikeln på ca 2 A4 utifrån redaktörens disposition och researchunderlaget. Skapar en läsarvänlig, välformulerad text med engagerande ingress, tydligt flöde och en avslutande poäng.",
+      "tools": "textgenerering, språkgranskning, anpassning av stil och läsnivå",
+      "phase": 3,
+      "why": "En specialiserad skribent säkerställer att den färdiga texten är välskriven och läsbar – inte bara korrekt i sak."
+    }
+  ]
+}

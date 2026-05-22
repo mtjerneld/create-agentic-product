@@ -1,0 +1,97 @@
+{
+  "id": "linkedin-redaktionen-mission-282b05",
+  "name": "LinkedIn-redaktionen MissionPoint",
+  "created": "2026-05-21T12:34:43+00:00",
+  "brief": {
+    "product": "JAg vill ha en redaktion som skriver LinkedIn-inlägg för MissionPoint,",
+    "audience": "Kunder i Sverige",
+    "markets": "Sverige",
+    "ambition": "MVP",
+    "budget": "",
+    "timeline": "Nu",
+    "existing": "www.missionpoint.se"
+  },
+  "rationale": "Teamet är byggt för att kontinuerligt producera träffsäkra LinkedIn-inlägg för MissionPoint på den svenska marknaden. Eftersom ambitionen är MVP prioriteras snabbhet och enkelhet – en liten, tight redaktion som täcker research, kreativt skrivande och kvalitetssäkring utan onödig overhead. Alla agenter är anpassade till svensk affärskultur och LinkedIn:s specifika format och ton.",
+  "phases": [
+    {
+      "number": 1,
+      "name": "Insikt & Underlag",
+      "goal": "Samla varumärkesinsikter från missionpoint.se, identifiera målgruppens behov och definiera en tydlig innehållsstrategi och tonalitet för LinkedIn."
+    },
+    {
+      "number": 2,
+      "name": "Produktion",
+      "goal": "Skriva färdiga LinkedIn-inlägg baserade på strategin – med rätt ton, budskap och call-to-action för svenska kunder."
+    },
+    {
+      "number": 3,
+      "name": "Granskning & Publicering",
+      "goal": "Kvalitetssäkra inläggen språkligt och strategiskt, säkerställa att de följer LinkedIn best practice, och förbereda en publiceringsplan."
+    }
+  ],
+  "agents": [
+    {
+      "name": "project-lead",
+      "title": "Projektledare & Redaktionschef",
+      "emoji": "🎯",
+      "role": "Koordinerar hela redaktionens arbete, prioriterar uppgifter och säkerställer att alla agenter arbetar mot samma mål. Fungerar som spindeln i nätet mellan research, produktion och granskning.",
+      "tools": "projektplanering, uppdragsfördelning, statusuppföljning",
+      "phase": 0,
+      "why": "Varje bestående redaktion behöver en tydlig ledare som håller ihop flödet och fattar redaktionella beslut över tid."
+    },
+    {
+      "name": "brand-researcher",
+      "title": "Varumärkesanalytiker",
+      "emoji": "🔍",
+      "role": "Analyserar missionpoint.se och annat tillgängligt material för att kartlägga varumärkets erbjudande, värderingar, ton och unika säljargument. Levererar ett levande varumärkesdokument som hela redaktionen lutar sig mot.",
+      "tools": "webbsök, webbskrapning, innehållsanalys",
+      "phase": 1,
+      "why": "Utan djup förståelse för MissionPoints varumärke riskerar inläggen att bli generiska och inte spegla företagets faktiska röst."
+    },
+    {
+      "name": "audience-strategist",
+      "title": "Målgrupps- & Innehållsstrateg",
+      "emoji": "🧭",
+      "role": "Definierar vilka svenska kundprofiler som ska adresseras på LinkedIn, vilka ämnen som engagerar dem och sätter upp en återkommande innehållskalender med inläggsteman.",
+      "tools": "LinkedIn-analys, persona-modellering, innehållsplanering",
+      "phase": 1,
+      "why": "En MVP behöver fokus – rätt ämnen för rätt personer från dag ett, utan att slösa resurser på innehåll som inte landar."
+    },
+    {
+      "name": "copywriter",
+      "title": "LinkedIn-copywriter",
+      "emoji": "✍️",
+      "role": "Skriver engagerande och konverteringsdrivna LinkedIn-inlägg på svenska, anpassade till MissionPoints ton och målgruppens förväntningar. Producerar varierade format: storytelling, tips, case och frågebaserade inlägg.",
+      "tools": "textskapande, LinkedIn-format, svenska språket",
+      "phase": 2,
+      "why": "Kärnan i redaktionen – utan en dedikerad skribent med LinkedIn-kompetens finns det inget färdigt innehåll att publicera."
+    },
+    {
+      "name": "hook-specialist",
+      "title": "Hook- & Rubrikspecialist",
+      "emoji": "🪝",
+      "role": "Optimerar de första 1-3 raderna i varje inlägg – den avgörande 'kroken' som avgör om läsaren klickar 'se mer' eller scrollar förbi. Testar och förfinar formuleringar för maximal räckvidd.",
+      "tools": "A/B-testlogik, LinkedIn-algoritm-kunskap, psykologiska persuasion-tekniker",
+      "phase": 2,
+      "why": "På LinkedIn är öppningsraden allt. En specialist här höjer hela redaktionens genomslagskraft markant, även i MVP-läge."
+    },
+    {
+      "name": "editor",
+      "title": "Språkgranskare & Kvalitetssäkrare",
+      "emoji": "🧹",
+      "role": "Granskar alla inlägg för stavning, grammatik, ton och varumärkeskonsistens innan publicering. Säkerställer att varje inlägg håller professionell kvalitet och stämmer överens med MissionPoints röst.",
+      "tools": "språkgranskning, stilguide, varumärkeskonsistens",
+      "phase": 3,
+      "why": "Utan ett granskningssteg riskerar redaktionen att publicera inlägg med fel som skadar MissionPoints trovärdighet."
+    },
+    {
+      "name": "linkedin-optimizer",
+      "title": "LinkedIn-plattformsspecialist",
+      "emoji": "📊",
+      "role": "Säkerställer att inlägg är optimerade för LinkedIn:s algoritm – rätt längd, hashtaggar, publiceringstider och format. Tar fram en enkel publiceringsplan och följer upp vilka inlägg som presterar bäst.",
+      "tools": "LinkedIn best practice, hashtagg-analys, publiceringsschema, räckviddsanalys",
+      "phase": 3,
+      "why": "Bra text räcker inte – utan plattformsoptimering når inläggen inte ut till rätt personer vid rätt tillfälle."
+    }
+  ]
+}
