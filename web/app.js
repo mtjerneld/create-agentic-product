@@ -612,6 +612,9 @@ function handleEvent(ev) {
     case "agent_delta":
       appendDelta(ev.agent, ev.text);
       break;
+    case "agent_search":
+      appendSearch(ev.agent, ev.query);
+      break;
     case "agent_done":
       finishAgent(ev);
       break;
@@ -677,6 +680,17 @@ function appendDelta(id, text) {
   if (atBottom) body.scrollTop = body.scrollHeight;
 }
 
+function appendSearch(id, query) {
+  const el = runEls.agents[id];
+  if (!el) return;
+  const body = el.querySelector(".ra-body");
+  const atBottom = body.scrollHeight - body.scrollTop - body.clientHeight < 40;
+  body.textContent += query
+    ? `\n🔍 Webbsökning: "${query}"\n`
+    : "\n🔍 Webbsökning\n";
+  if (atBottom) body.scrollTop = body.scrollHeight;
+}
+
 function finishAgent(ev) {
   const el = runEls.agents[ev.agent];
   if (!el) return;
@@ -686,6 +700,11 @@ function finishAgent(ev) {
   const foot = el.querySelector(".ra-foot");
   foot.hidden = false;
   foot.innerHTML = `<span>${ev.chars || 0} tecken</span>`;
+  if (ev.searches) {
+    const s = document.createElement("span");
+    s.textContent = `🔍 ${ev.searches} webbsökning${ev.searches === 1 ? "" : "ar"}`;
+    foot.appendChild(s);
+  }
   if (ev.deliverable && state.team && state.jobId) {
     const a = document.createElement("button");
     a.type = "button";

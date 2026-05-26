@@ -45,6 +45,38 @@ _load_env()
 MODEL = os.environ.get("TEAM_MODEL", "claude-sonnet-4-6")
 
 
+def _env_int(name: str, default: int) -> int:
+    """Läser ett heltal från miljön, faller tillbaka på default vid fel."""
+    try:
+        return int(os.environ.get(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+# Output-token-tak. claude-sonnet-4-6 klarar upp till 64k — tidigare värden
+# (2400–4096) gjorde att längre leveranser höggs av. Ställbara via .env.
+MAX_TOKENS_TEAM = _env_int("TEAM_MAX_TOKENS_TEAM", 4096)        # team-förslag (JSON)
+MAX_TOKENS_AGENT = _env_int("TEAM_MAX_TOKENS_AGENT", 12000)     # en agents leverans
+MAX_TOKENS_DELIVERY = _env_int("TEAM_MAX_TOKENS_DELIVERY", 20000)  # slutleverans
+MAX_TOKENS_KNOWLEDGE = _env_int("TEAM_MAX_TOKENS_KNOWLEDGE", 8000)  # kunskapsbas
+
+# Anthropics inbyggda serverside-verktyg för webbsök.
+WEB_SEARCH_TOOL = {"type": "web_search_20250305", "name": "web_search", "max_uses": 5}
+
+# Nyckelord i en agents tools-sträng som signalerar att den behöver webbsök.
+_SEARCH_HINTS = (
+    "webbsök", "webb-sök", "web search", "websök", "internetsök", "sök på nät",
+    "sök på webben", "omvärldsbevak", "omvärldsanalys", "marknadsdata",
+    "realtidsdata", "research", "efterforsk",
+)
+
+
+def _wants_web_search(tools: str) -> bool:
+    """True om agentens tools-sträng nämner någon form av webbsök/research."""
+    t = (tools or "").lower()
+    return any(hint in t for hint in _SEARCH_HINTS)
+
+
 def get_client() -> AsyncAnthropic:
     key = os.environ.get("ANTHROPIC_API_KEY")
     if not key:
@@ -143,7 +175,7 @@ async def propose_team(brief: dict) -> dict:
     client = get_client()
     msg = await client.messages.create(
         model=MODEL,
-        max_tokens=2400,
+        max_tokens=MAX_TOKENS_TEAM,
         system=PROPOSE_SYSTEM,
         tools=[TEAM_TOOL],
         tool_choice={"type": "tool", "name": "submit_team"},
@@ -186,20 +218,38 @@ def _digest(deliverables: list, cap: int = 2500) -> str:
 
 
 async def _stream_agent(client, agent_id, title, emoji, system, user, emit, save=None,
-                        max_tokens=8192):
-    """Streamar en agents svar. `save` = (team_id, job_id, filename) eller None."""
+                        max_tokens=MAX_TOKENS_AGENT, tools=None):
+    """Streamar en agents svar. `save` = (team_id, job_id, filename) eller None.
+
+    `tools` = lista av API-verktyg (t.ex. WEB_SEARCH_TOOL) eller None. När
+    webbsök används streamas både text och `agent_search`-händelser.
+    """
     await emit({"type": "agent_started", "agent": agent_id, "title": title, "emoji": emoji})
     parts = []
+    searches = 0
+    kwargs = {
+        "model": MODEL,
+        "max_tokens": max_tokens,
+        "system": system,
+        "messages": [{"role": "user", "content": user}],
+    }
+    if tools:
+        kwargs["tools"] = tools
     try:
-        async with client.messages.stream(
-            model=MODEL,
-            max_tokens=max_tokens,
-            system=system,
-            messages=[{"role": "user", "content": user}],
-        ) as stream:
-            async for delta in stream.text_stream:
-                parts.append(delta)
-                await emit({"type": "agent_delta", "agent": agent_id, "text": delta})
+        async with client.messages.stream(**kwargs) as stream:
+            async for event in stream:
+                if event.type == "text":
+                    parts.append(event.text)
+                    await emit({"type": "agent_delta", "agent": agent_id, "text": event.text})
+                elif event.type == "content_block_stop":
+                    block = event.content_block
+                    if getattr(block, "type", None) == "server_tool_use" \
+                            and getattr(block, "name", None) == "web_search":
+                        query = ""
+                        if isinstance(getattr(block, "input", None), dict):
+                            query = block.input.get("query", "")
+                        searches += 1
+                        await emit({"type": "agent_search", "agent": agent_id, "query": query})
     except Exception as e:  # noqa: BLE001
         await emit({"type": "agent_error", "agent": agent_id, "message": str(e)})
         raise
@@ -211,17 +261,24 @@ async def _stream_agent(client, agent_id, title, emoji, system, user, emit, save
         deliverable = filename
     await emit({
         "type": "agent_done", "agent": agent_id,
-        "deliverable": deliverable, "chars": len(full),
+        "deliverable": deliverable, "chars": len(full), "searches": searches,
     })
     return full
 
 
-def _agent_system(title, role, tools, phase_name, phase_goal) -> str:
+def _agent_system(title, role, tools, phase_name, phase_goal, has_web=False) -> str:
     tools_line = f"Verktyg/kapaciteter du förväntas använda: {tools}\n" if tools else ""
+    web_line = (
+        "Du har tillgång till ett riktigt webbsök-verktyg. Använd det för att "
+        "hämta aktuella fakta, siffror och källor i stället för att gissa — "
+        "och hänvisa till vad du hittade.\n"
+        if has_web else ""
+    )
     return (
         f"Du är {title}, en agent i ett bestående AI-drivet kreativt produktteam.\n"
         f"Roll: {role}\n"
         f"{tools_line}"
+        f"{web_line}"
         f"Fas: {phase_name} — {phase_goal}\n\n"
         "Producera en konkret, högkvalitativ leverans för din roll i denna fas. "
         "Var specifik och handlingsbar — inga generiska floskler. Använd teamets "
@@ -271,7 +328,7 @@ async def _update_knowledge(client, team_id, team_name, current, deliverables, e
         f"LEVERANSER FRÅN DET AVSLUTADE JOBBET:\n{_digest(deliverables)}"
     )
     msg = await client.messages.create(
-        model=MODEL, max_tokens=6000, system=KNOWLEDGE_SYSTEM,
+        model=MODEL, max_tokens=MAX_TOKENS_KNOWLEDGE, system=KNOWLEDGE_SYSTEM,
         messages=[{"role": "user", "content": user}],
     )
     text = "".join(b.text for b in msg.content if b.type == "text").strip()
@@ -349,11 +406,14 @@ async def run_team(team_id: str, job_id: str, task: str, emit) -> None:
             if prior:
                 user += f"\nLEVERANSER HITTILLS I DETTA JOBB:\n{prior}\n"
             user += "\nLevera ditt bidrag nu."
+            has_web = _wants_web_search(agent.get("tools", ""))
+            agent_tools = [WEB_SEARCH_TOOL] if has_web else None
             return await _stream_agent(
                 client, agent.get("name", slugify(title)), title, agent.get("emoji", "🧩"),
                 _agent_system(title, agent.get("role", ""), agent.get("tools", ""),
-                              phase.get("name", ""), phase.get("goal", "")),
+                              phase.get("name", ""), phase.get("goal", ""), has_web=has_web),
                 user, emit, save=(team_id, job_id, f"{slugify(title)}.md"),
+                tools=agent_tools,
             )
 
         results = await asyncio.gather(*(run_one(a) for a in phase_agents), return_exceptions=True)
@@ -372,7 +432,7 @@ async def run_team(team_id: str, job_id: str, task: str, emit) -> None:
             DELIVERY_SYSTEM.format(title=lead.get("title", "Project Lead")),
             f"{context_block()}\nUPPGIFT TILL TEAMET:\n{task}\n\n"
             f"AGENTERNAS FULLSTÄNDIGA LEVERANSER:\n{_digest(deliverables, cap=9000)}",
-            emit, save=(team_id, job_id, "slutleverans.md"), max_tokens=16384,
+            emit, save=(team_id, job_id, "slutleverans.md"), max_tokens=MAX_TOKENS_DELIVERY,
         )
         deliverables.append(("Slutleverans", delivery))
         await emit({"type": "phase_done", "phase": 999})

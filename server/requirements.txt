@@ -1,6 +1,6 @@
 fastapi>=0.110
 uvicorn[standard]>=0.29
-anthropic>=0.40
+anthropic>=0.52
 markdown>=3.6
 pypdf>=4.2
 python-multipart>=0.0.9
