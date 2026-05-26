@@ -723,11 +723,9 @@ function openPanel(title, html, docxUrl) {
     dl.hidden = true;
   }
   $("#panel").hidden = false;
-  $("#panel").classList.add("open");
 }
 
 function closePanel() {
-  $("#panel").classList.remove("open");
   $("#panel").hidden = true;
 }
 
@@ -762,9 +760,36 @@ async function openAttachment(teamId, jobId, name) {
 }
 
 $("#panel-close").addEventListener("click", closePanel);
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closePanel();
+$("#panel").addEventListener("click", (e) => {
+  if (e.target.id === "panel") closePanel();
 });
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && !$("#panel").hidden) closePanel();
+});
+
+/* ---- Tema-toggle ---- */
+(function initTheme() {
+  const saved = localStorage.getItem("mp-theme");
+  if (saved === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+  }
+  function icon() {
+    $("#theme-toggle").textContent =
+      document.documentElement.getAttribute("data-theme") === "dark" ? "☀️" : "🌙";
+  }
+  icon();
+  $("#theme-toggle").addEventListener("click", () => {
+    const html = document.documentElement;
+    if (html.getAttribute("data-theme") === "dark") {
+      html.removeAttribute("data-theme");
+      localStorage.setItem("mp-theme", "light");
+    } else {
+      html.setAttribute("data-theme", "dark");
+      localStorage.setItem("mp-theme", "dark");
+    }
+    icon();
+  });
+})();
 
 /* ---- Start ---- */
 loadDashboard();

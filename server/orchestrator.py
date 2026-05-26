@@ -186,7 +186,7 @@ def _digest(deliverables: list, cap: int = 2500) -> str:
 
 
 async def _stream_agent(client, agent_id, title, emoji, system, user, emit, save=None,
-                        max_tokens=2800):
+                        max_tokens=8192):
     """Streamar en agents svar. `save` = (team_id, job_id, filename) eller None."""
     await emit({"type": "agent_started", "agent": agent_id, "title": title, "emoji": emoji})
     parts = []
@@ -271,7 +271,7 @@ async def _update_knowledge(client, team_id, team_name, current, deliverables, e
         f"LEVERANSER FRÅN DET AVSLUTADE JOBBET:\n{_digest(deliverables)}"
     )
     msg = await client.messages.create(
-        model=MODEL, max_tokens=2600, system=KNOWLEDGE_SYSTEM,
+        model=MODEL, max_tokens=6000, system=KNOWLEDGE_SYSTEM,
         messages=[{"role": "user", "content": user}],
     )
     text = "".join(b.text for b in msg.content if b.type == "text").strip()
@@ -372,7 +372,7 @@ async def run_team(team_id: str, job_id: str, task: str, emit) -> None:
             DELIVERY_SYSTEM.format(title=lead.get("title", "Project Lead")),
             f"{context_block()}\nUPPGIFT TILL TEAMET:\n{task}\n\n"
             f"AGENTERNAS FULLSTÄNDIGA LEVERANSER:\n{_digest(deliverables, cap=9000)}",
-            emit, save=(team_id, job_id, "slutleverans.md"), max_tokens=4096,
+            emit, save=(team_id, job_id, "slutleverans.md"), max_tokens=16384,
         )
         deliverables.append(("Slutleverans", delivery))
         await emit({"type": "phase_done", "phase": 999})

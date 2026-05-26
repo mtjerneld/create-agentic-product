@@ -23,7 +23,7 @@ DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.docu
 ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
 
-app = FastAPI(title="Creative Product Team")
+app = FastAPI(title="MissionPoint AI Teams")
 
 _MD_EXT = ["extra", "sane_lists", "toc"]
 

@@ -1,0 +1,253 @@
+MissionPoint IT- och Informationssäkerhetspolicy    
+ 
+ 
+ 
+ 
+Version 1.0 
+Stockholm, 2026-02-27
+
+Dokument Policy Version 
+1.0 
+Datumversion 
+2026-02-27 
+Sida 
+1 
+ 
+ 
+ MissionPoint AB Kungsgatan 32 
+111 35 Stockholm    
+Postadress Box 7761 
+103 96 Stockholm  
+Kontaktuppgifter  + 46 (0)8 550 408 00 
+Info@missionpoint.se 
+ 
+  
+1. Inledning 
+På MissionPoint AB är vi engagerade i att skydda information, IT-resurser och kunddata på 
+ett ansvarsfullt och proportionerligt sätt. Denna policy beskriver hur vi arbetar med 
+informationssäkerhet inom verksamheten. 
+2. Syfte 
+Syftet med denna policy är att säkerställa att MissionPoint skyddar information, IT-resurser 
+och kunddata på ett ansvarsfullt och proportionerligt sätt, i linje med verksamhetens roll 
+som rådgivande konsultorganisation. 
+Policyn ska: 
+ Skydda konfidentialitet, riktighet och tillgänglighet 
+ Minska risken för informationssäkerhetsincidenter 
+ Skydda kunders information och förtroende 
+ Säkerställa ansvarsfull användning av IT-resurser och AI-verktyg 
+MissionPoint strävar efter en hög nivå av informationssäkerhet, anpassad efter 
+verksamhetens storlek, riskbild och roll. 
+3. Omfattning 
+Denna policy gäller för: 
+ Alla anställda 
+ Konsulter och uppdragstagare 
+ Alla IT-system och informationsresurser som används inom MissionPoint 
+ All information som MissionPoint hanterar, inklusive kundinformation 
+Policyn omfattar både: 
+ Företagets egna system och enheter 
+ Kundsystem där MissionPoint har åtkomst 
+4. MissionPoints roll och ansvar 
+MissionPoint är primärt en rådgivande organisation och har i regel inte operativt ägarskap 
+över kunders IT-system eller produktionsmiljöer. 
+MissionPoint ansvarar för att: 
+ Skydda information som hanteras inom verksamheten 
+ Hantera kundinformation konfidentiellt
+
+Dokument Policy Version 
+1.0 
+Datumversion 
+2026-02-27 
+Sida 
+2 
+ 
+ 
+ MissionPoint AB Kungsgatan 32 
+111 35 Stockholm    
+Postadress Box 7761 
+103 96 Stockholm  
+Kontaktuppgifter  + 46 (0)8 550 408 00 
+Info@missionpoint.se 
+ 
+  
+ Använda IT-system på ett säkert och ansvarsfullt sätt 
+Kunden ansvarar normalt för: 
+ Implementering av säkerhetsåtgärder 
+5. Indirekt regelpåverkan och leverantörsroll 
+MissionPoint beaktar att bolag kan vara del av kunders eller partners säkerhetskedja, inklusive 
+organisationer som omfattas av exempelvis NIS2 eller DORA.  
+Även om MissionPoint normalt inte har operativt ägarskap över kunders system ska bolaget kunna 
+möta rimliga informationssäkerhetskrav från kunder och samarbetspartners.  
+6. Informationssäkerhetsprinciper 
+MissionPoint baserar sitt arbete på följande principer: 
+Konfidentialitet: Information ska endast vara tillgänglig för behöriga personer. 
+Riktighet: Information ska vara korrekt och skyddad mot obehörig förändring. 
+Tillgänglighet: Information ska vara tillgänglig när den behövs för verksamheten. 
+Ansvarsfull hantering: Alla medarbetare ansvarar för att hantera information på ett säkert 
+sätt. 
+MissionPoint arbetar riskbaserat med informationssäkerhet. Säkerhetsåtgärder ska stå i 
+proportion till identifierade risker, verksamhetens behov och kundkrav. 
+MissionPoint ska ha en utsedd informationssäkerhetsansvarig. Rollen innehas av CIO eller 
+den som CIO delegerar till. Den informationssäkerhetsansvarige ansvarar för samordning, 
+uppföljning och vidareutveckling av organisationens informationssäkerhetsarbete. 
+ 
+7. Informationsklassning och hantering 
+MissionPoint hanterar bland annat: 
+ Kunddokument 
+ Säkerhetsanalyser 
+ Systemåtkomst 
+ Produktionsmiljöer 
+ Personuppgifter 
+ Säkerhetskänslig information
+
+Dokument Policy Version 
+1.0 
+Datumversion 
+2026-02-27 
+Sida 
+3 
+ 
+ 
+ MissionPoint AB Kungsgatan 32 
+111 35 Stockholm    
+Postadress Box 7761 
+103 96 Stockholm  
+Kontaktuppgifter  + 46 (0)8 550 408 00 
+Info@missionpoint.se 
+ 
+  
+Sådan information ska: 
+ Endast delas med behöriga personer 
+ Lagras och hanteras i godkända system 
+ Skyddas mot obehörig åtkomst 
+ Inte delas via osäkra kanaler 
+Kundinformation ska alltid behandlas som konfidentiell om inget annat anges. 
+7.1. Personuppgifter 
+Behandling av personuppgifter ska ske i enlighet med gällande dataskyddslagstiftning, 
+inklusive EU:s dataskyddsförordning (GDPR). 
+Personuppgifter får endast behandlas för tydligt definierade ändamål och ska skyddas mot 
+obehörig åtkomst, förändring och spridning. 
+Närmare regler om hur MissionPoint behandlar personuppgifter, inklusive laglig grund, 
+lagringstider, utlämnande och registrerades rättigheter, framgår av MissionPoints 
+Integritetspolicy. 
+ 
+8. Användning av AI-verktyg 
+AI-verktyg får endast användas i enlighet med gällande avtal och kundkrav. MissionPoint 
+tillåter användning av AI-baserade verktyg såsom: 
+ ChatGPT 
+ Microsoft Copilot 
+ Claude 
+ andra relevanta AI-verktyg 
+Följande regler gäller: 
+Förbjudet 
+Följande får inte delas med AI-verktyg: 
+ Personuppgifter 
+ Säkerhetskänslig information 
+ Konfidentiella dokument 
+ Icke-publik information 
+Tillåtet
+
+Dokument Policy Version 
+1.0 
+Datumversion 
+2026-02-27 
+Sida 
+4 
+ 
+ 
+ MissionPoint AB Kungsgatan 32 
+111 35 Stockholm    
+Postadress Box 7761 
+103 96 Stockholm  
+Kontaktuppgifter  + 46 (0)8 550 408 00 
+Info@missionpoint.se 
+ 
+  
+Det är tillåtet att använda AI om: 
+ Information är anonymiserad 
+ Ingen kund kan identifieras 
+ Ingen känslig information delas 
+Ansvar 
+Medarbetare ansvarar för att: 
+ Granska AI-genererat innehåll 
+ Säkerställa korrekthet 
+ Inte förlita sig blint på AI-resultat 
+AI är ett stödverktyg, inte en beslutsfattare. 
+9.  Incidenthantering 
+Vid incidenter som rör personuppgifter ska bedömning av anmälningsplikt enligt 
+Dataskyddsförordningen (GDPR) göras i enlighet med MissionPoints Integritetspolicy, 
+inklusive information till berörda kunder eller registrerade. 
+Övriga informationssäkerhetsincidenter ska rapporteras så snart som möjligt till ledningen 
+och följas upp för att identifiera rotorsak och förebyggande åtgärder. 
+Exempel på incidenter kan inkludera, men är inte begränsade till: 
+ Misstänkt dataintrång 
+ Förlorad dator 
+ Felaktigt delad information 
+ Obehörig åtkomst 
+10. Distansarbete  
+MissionPoint tillämpar hybrid arbetsmodell. 
+Vid distansarbete ska: 
+ Företagsdator användas 
+ Information skyddas mot obehörig åtkomst 
+ Offentliga datorer och öppna Wi-Fi-nätverk undvikas 
+ Kundinformation hanteras med försiktighet 
+11.  Leverantörshantering
+
+Dokument Policy Version 
+1.0 
+Datumversion 
+2026-02-27 
+Sida 
+5 
+ 
+ 
+ MissionPoint AB Kungsgatan 32 
+111 35 Stockholm    
+Postadress Box 7761 
+103 96 Stockholm  
+Kontaktuppgifter  + 46 (0)8 550 408 00 
+Info@missionpoint.se 
+ 
+  
+MissionPoint använder externa leverantörer för IT- och molntjänster. Bolaget ska säkerställa 
+att sådana leverantörer hanterar information på ett säkert och ansvarsfullt sätt. 
+Innan införande av ny IT- eller molntjänst ska en rimlig säkerhetsbedömning genomföras. 
+Bedömningen ska vara proportionerlig i förhållande till tjänstens risk och 
+informationskänslighet. 
+Detta kan inkludera: 
+ Säkerhetsbedömning före införande 
+ Bedömning av leverantörens informationssäkerhetsnivå 
+ Personuppgiftsbiträdesavtal där tillämpligt 
+ Bedömning av var information lagras och behandlas 
+11.1. Lagring och behandling inom EU/EES 
+MissionPoint ska, där det är möjligt och lämpligt, prioritera leverantörer som lagrar och 
+behandlar information inom EU/EES. 
+Om behandling sker utanför EU/EES ska detta ske i enlighet med gällande 
+dataskyddslagstiftning och med lämpliga skyddsåtgärder. 
+12. Ansvar  
+Ledningen ansvarar för: 
+ Att denna policy finns och följs 
+Medarbetare ansvarar för: 
+ Att följa policyn 
+ Skydda information 
+ Rapportera incidenter 
+13. Efterlevnad  
+Brott mot denna policy kan leda till åtgärder beroende på omständigheterna. 
+14. Uppdatering  
+Policyn ska ses över minst årligen och uppdateras vid behov. 
+15. Revisionshistorik 
+Ändrad av Datum
+
+Dokument Policy Version 
+1.0 
+Datumversion 
+2026-02-27 
+Sida 
+6 
+ 
+ 
+ MissionPoint AB Kungsgatan 32 
+111 35 Stockholm    
+Postadress Box 7761 
+103 96 Stockholm  
+Kontaktuppgifter  + 46 (0)8 550 408 00 
+Info@missionpoint.se

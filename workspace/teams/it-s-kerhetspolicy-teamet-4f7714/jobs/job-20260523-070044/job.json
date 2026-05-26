@@ -1,0 +1,14 @@
+{
+  "id": "job-20260523-070044",
+  "teamId": "it-s-kerhetspolicy-teamet-4f7714",
+  "task": "Jag vill att ni granskar den här IT-säkerhetspolicyn för Mission Point, som är ett utkast inför godkännande av styrelsen.\r\n\r\nMission Point vill ha en extremt lätt och, eh, kortfattad policy.\r\n\r\nSå uppdraget här är inte att identifiera exakt allt, ingenting som skulle kunna stå i en policy men inte gör, utan snarare utgå ifrån bare minimum och se till att den ändå täcker de absolut viktigaste kraven.\r\n\r\nLess is more.",
+  "status": "done",
+  "created": "2026-05-23T07:00:44+00:00",
+  "finished": "2026-05-23T07:09:54+00:00",
+  "attachments": [
+    {
+      "name": "s-kpolicy.pdf",
+      "chars": 8105
+    }
+  ]
+}
