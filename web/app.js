@@ -279,6 +279,7 @@ function renderWorkspace(team) {
   $("#ws-rationale").textContent = team.rationale || "";
   $("#ws-knowledge").innerHTML = team.knowledgeHtml || "<p class='muted'>Tom kunskapsbas.</p>";
   $("#ws-knowledge-dl").href = "/api/teams/" + team.id + "/knowledge/docx";
+  $("#ws-knowledge-dl-pdf").href = "/api/teams/" + team.id + "/knowledge/pdf";
   knowledgeEdit(false);
   $("#ws-task").value = "";
   state.files = [];
@@ -332,7 +333,8 @@ function renderJobs(team) {
     const statusCls = job.status === "done" ? "done" : job.status === "error" ? "error" : "running";
     const all = job.deliverables || [];
     const jobDl = all.length
-      ? `<a class="dl-btn job-dl" href="/api/teams/${team.id}/jobs/${job.id}/docx">⬇ Word</a>`
+      ? `<a class="dl-btn job-dl" href="/api/teams/${team.id}/jobs/${job.id}/docx">⬇ Word</a>
+         <a class="dl-btn job-dl" href="/api/teams/${team.id}/jobs/${job.id}/pdf">⬇ PDF</a>`
       : "";
     el.innerHTML = `
       <div class="job-head">
@@ -729,7 +731,7 @@ function errorAgent(ev) {
 /* ===================================================================== *
  *  RESULTATPANEL (sidopanel)
  * ===================================================================== */
-function openPanel(title, html, docxUrl) {
+function openPanel(title, html, docxUrl, pdfUrl) {
   $("#panel-title").textContent = title;
   $("#panel-body").innerHTML = html;
   $("#panel-body").scrollTop = 0;
@@ -740,6 +742,14 @@ function openPanel(title, html, docxUrl) {
   } else {
     dl.removeAttribute("href");
     dl.hidden = true;
+  }
+  const dlPdf = $("#panel-download-pdf");
+  if (pdfUrl) {
+    dlPdf.href = pdfUrl;
+    dlPdf.hidden = false;
+  } else {
+    dlPdf.removeAttribute("href");
+    dlPdf.hidden = true;
   }
   $("#panel").hidden = false;
 }
@@ -755,7 +765,8 @@ async function openDoc(teamId, jobId, name) {
       `/api/teams/${teamId}/jobs/${jobId}/doc/${encodeURIComponent(name)}`
     );
     const docxUrl = `/api/teams/${teamId}/jobs/${jobId}/doc/${encodeURIComponent(name)}/docx`;
-    openPanel(name, data.html || "", docxUrl);
+    const pdfUrl = `/api/teams/${teamId}/jobs/${jobId}/doc/${encodeURIComponent(name)}/pdf`;
+    openPanel(name, data.html || "", docxUrl, pdfUrl);
   } catch (err) {
     closePanel();
     toast("Kunde inte öppna dokumentet: " + err.message);

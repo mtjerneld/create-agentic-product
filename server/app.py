@@ -19,6 +19,7 @@ import export
 from orchestrator import propose_team, run_team
 
 DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+PDF_MIME = "application/pdf"
 
 ROOT = Path(__file__).resolve().parent.parent
 WEB = ROOT / "web"
@@ -44,6 +45,18 @@ def _docx(sections: list, filename: str):
     return Response(
         content=data,
         media_type=DOCX_MIME,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+def _pdf(sections: list, filename: str):
+    try:
+        data = export.md_to_pdf(sections, title=filename.rsplit(".", 1)[0])
+    except Exception as e:  # noqa: BLE001
+        return _err("Kunde inte skapa PDF-fil: " + str(e), 500)
+    return Response(
+        content=data,
+        media_type=PDF_MIME,
         headers={"Content-Disposition": f'attachment; filename="{filename}"'},
     )
 
@@ -145,6 +158,15 @@ async def api_knowledge_docx(team_id: str):
     return _docx([store.get_knowledge(team_id)], "kunskapsbas.docx")
 
 
+@app.get("/api/teams/{team_id}/knowledge/pdf")
+async def api_knowledge_pdf(team_id: str):
+    try:
+        store.get_team(team_id)
+    except FileNotFoundError as e:
+        return _err(str(e), 404)
+    return _pdf([store.get_knowledge(team_id)], "kunskapsbas.pdf")
+
+
 # --- jobb -----------------------------------------------------------------
 
 @app.get("/api/teams/{team_id}/jobs/{job_id}")
@@ -178,6 +200,17 @@ async def api_job_doc_docx(team_id: str, job_id: str, name: str):
     return _docx([raw], name[:-3] + ".docx")
 
 
+@app.get("/api/teams/{team_id}/jobs/{job_id}/doc/{name}/pdf")
+async def api_job_doc_pdf(team_id: str, job_id: str, name: str):
+    try:
+        raw = store.read_deliverable(team_id, job_id, name)
+    except FileNotFoundError as e:
+        return _err(str(e), 404)
+    except ValueError as e:
+        return _err(str(e), 400)
+    return _pdf([raw], name[:-3] + ".pdf")
+
+
 @app.get("/api/teams/{team_id}/jobs/{job_id}/docx")
 async def api_job_docx(team_id: str, job_id: str):
     try:
@@ -188,6 +221,18 @@ async def api_job_docx(team_id: str, job_id: str):
     except FileNotFoundError as e:
         return _err(str(e), 404)
     return _docx(sections, job_id + ".docx")
+
+
+@app.get("/api/teams/{team_id}/jobs/{job_id}/pdf")
+async def api_job_pdf(team_id: str, job_id: str):
+    try:
+        names = store.list_deliverables(team_id, job_id)
+        if not names:
+            return _err("Jobbet har inga leveranser.", 404)
+        sections = [store.read_deliverable(team_id, job_id, n) for n in names]
+    except FileNotFoundError as e:
+        return _err(str(e), 404)
+    return _pdf(sections, job_id + ".pdf")
 
 
 @app.get("/api/teams/{team_id}/jobs/{job_id}/attachment/{name}")
